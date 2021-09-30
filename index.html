@@ -8,11 +8,7 @@
     <title>Weather Dashboard</title>
     <link rel="stylesheet" href="./style.css">
     <!--Bootstrap CDN-->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -37,17 +33,19 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-8">
                 <div class="current-info border border-dark mb-3">
-                    <h2>Current Day (Date Info)</h2>
+                    <h2 id="current-date"></h2>
                 </div>
                 <div class="five-day-info border border-dark">
                     <h3>5-Day Forecast</h3>
                 </div>
             </div>
         </div>
-    </div>
+    </div>  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <!--<script src="https://code.jquery.com/jquery.js"></script>-->
+    <script src="./script.js"></script>
 </body>
 
 </html>
