@@ -29,39 +29,79 @@ current.uvi = UV Index
 5-day forecast:
 'daily' = weather for next 7 days
 */
-fetch(
-    "https://api.openweathermap.org/data/2.5/onecall?lat=60.99&lon=30.9&exclude=hourly&units=imperial&appid=067be3d3a13216f2b92074a702f43b7e"
-)
-    .then(function (response) {
-        //console.log(response.json())
-        return response.json();
-    })
-    .then(function (response) {
-        var currentDate = document.getElementById('current-date');
-        currentDate.textContent = response.timezone + ' ' + moment().format('MM/DD/YYYY');
+var getCity = JSON.parse(localStorage.getItem('savedCities')) || [];
 
-        var currentTemp = response.current.temp;
-        var currentTempInfoEl = document.createElement('p');
-        var currentInfo = document.querySelector('.current-info');
-        currentTempInfoEl.innerHTML = '';
-        currentTempInfoEl.textContent = 'Temp: ' + currentTemp + "°F";
-        currentInfo.appendChild(currentTempInfoEl);
+var getCurrentWeather = function (name) {
+    fetch(
+        "https://api.openweathermap.org/data/2.5/weather?q=" + name + "&units=imperial&appid=067be3d3a13216f2b92074a702f43b7e"
+    )
+        .then(function (response) {
+            //console.log(response.json())
+            return response.json();
+        })
+        .then(function (city) {
+            console.log(city);
+            //Longitude and latitude of city
+            var longitude = city.coord.lon;
+            var latitude = city.coord.lat;
 
-        var currentWind = response.current.weather.wind_speed;
-        var currentWindInfoEl = document.createElement('p');
-        currentWindInfoEl.innerHTML = '';
-        currentWindInfoEl.textContent = 'Wind: ' + currentWind + "MPH";
-        currentInfo.appendChild(currentWindInfoEl);
+            var currentDate = document.getElementById('current-date');
+            //Current date in MM/DD/YYYY format
+            currentDate.textContent = city.timezone + ' ' + moment().format('MM/DD/YYYY');
 
-        var currentHum = response.current.humidity;
-        var currentHumInfoEl = document.createElement('p');
-        currentHumInfoEl.innerHTML = '';
-        currentHumInfoEl.textContent = 'Humidity: ' + currentHum + "%";
-        currentInfo.appendChild(currentHumInfoEl);
+            //Current temp of a city
+            var currentTemp = city.main.temp;
+            var currentTempInfoEl = document.createElement('p');
+            var currentInfo = document.querySelector('.current-info');
+            currentTempInfoEl.innerHTML = '';
+            currentTempInfoEl.textContent = 'Temp: ' + currentTemp + "°F";
+            currentInfo.appendChild(currentTempInfoEl);
 
-        var currentUV = response.current.uvi;
-        var currentUVInfoEl = document.createElement('p');
-        currentUVInfoEl.innerHTML = '';
-        currentUVInfoEl.textContent = 'UV Index: ' + currentUV;
-        currentInfo.appendChild(currentUVInfoEl);
-    });
+            var currentWind = city.wind.speed;
+            var currentWindInfoEl = document.createElement('p');
+            currentWindInfoEl.innerHTML = '';
+            currentWindInfoEl.textContent = 'Wind: ' + currentWind + " MPH";
+            currentInfo.appendChild(currentWindInfoEl);
+
+            var currentHum = city.main.humidity;
+            var currentHumInfoEl = document.createElement('p');
+            currentHumInfoEl.innerHTML = '';
+            currentHumInfoEl.textContent = 'Humidity: ' + currentHum + "%";
+            currentInfo.appendChild(currentHumInfoEl);
+
+            getUV(latitude, longitude);
+        })
+}
+
+var getUV = function (latitude, longitude) {
+    fetch(
+        "https://api.openweathermap.org/data/2.5/onecall?lat=" +
+        latitude + "&lon=" + longitude +
+        "&exclude=hourly&units=imperial&appid=067be3d3a13216f2b92074a702f43b7e"
+    )
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (uvInfo) {
+            console.log(uvInfo);
+
+            var currentInfo = document.querySelector('.current-info');
+            var currentUVInfoEl = document.createElement('p');
+            currentUVInfoEl.innerHTML = '';
+            currentUVInfoEl.textContent = 'UV Index: ' + uvInfo.current.uvi;
+            currentInfo.appendChild(currentUVInfoEl);
+        })
+}
+
+$('.city-name').click(function () {
+    var name = document.querySelector('#input').value;
+    console.log(name);
+
+    getCity.push(name);
+    localStorage.setItem('savedCities',JSON.stringify(getCity));
+
+    getCurrentWeather(name);
+})
+
+
+
