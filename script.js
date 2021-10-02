@@ -2,6 +2,7 @@
 //Turns information in localStorage into a object if it exists OR creates an empty array if there is nothing inside localStorage
 var getCity = JSON.parse(localStorage.getItem('savedCities')) || [];
 
+//var savedCitiesId = $('.saved-cities');
 var savedCitiesId = document.querySelector('.saved-cities');
 //Displays current weather info
 
@@ -26,7 +27,7 @@ var getCurrentWeather = function (name) {
             //Display icon
             var currentIcon = city.weather[0].icon;
             var iconImage = document.createElement('img');
-            iconImage.innerHTML = '';
+            //iconImage.innerHTML = '';
             var iconLocation = document.querySelector('#icon-location')
             var iconurl = "http://openweathermap.org/img/w/" + currentIcon + ".png";
             iconImage.setAttribute('src', iconurl);
@@ -37,19 +38,19 @@ var getCurrentWeather = function (name) {
             var currentTemp = city.main.temp;
             var currentTempInfoEl = document.createElement('p');
             var currentInfo = document.querySelector('.current-info');
-            currentTempInfoEl.innerHTML = '';
+            //currentTempInfoEl.innerHTML = '';
             currentTempInfoEl.textContent = 'Temp: ' + currentTemp + "°F";
             currentInfo.appendChild(currentTempInfoEl);
 
             var currentWind = city.wind.speed;
             var currentWindInfoEl = document.createElement('p');
-            currentWindInfoEl.innerHTML = '';
+            //currentWindInfoEl.innerHTML = '';
             currentWindInfoEl.textContent = 'Wind: ' + currentWind + " MPH";
             currentInfo.appendChild(currentWindInfoEl);
 
             var currentHum = city.main.humidity;
             var currentHumInfoEl = document.createElement('p');
-            currentHumInfoEl.innerHTML = '';
+            //currentHumInfoEl.innerHTML = '';
             currentHumInfoEl.textContent = 'Humidity: ' + currentHum + "%";
             currentInfo.appendChild(currentHumInfoEl);
 
@@ -71,9 +72,14 @@ var getUV = function (latitude, longitude) {
         })
         //Current UV index
         .then(function (uvInfo) {
+            /*var currentInfo = $('.current-info');
+            var currentUVInfoEl = $('<p>');
+            currentUVInfoEl.val('');
+            currentUVInfoEl.text('UV Index: ' + uvInfo.current.uvi);
+            currentInfo.appendTo(currentUVInfoEl);*/
+
             var currentInfo = document.querySelector('.current-info');
             var currentUVInfoEl = document.createElement('p');
-            currentUVInfoEl.innerHTML = '';
             currentUVInfoEl.textContent = 'UV Index: ' + uvInfo.current.uvi;
             currentInfo.appendChild(currentUVInfoEl);
         })
@@ -87,66 +93,53 @@ var getFiveDay = function (name) {
             return response.json();
         })
         .then(function (city) {
-            
-            //Day 1 forecast
-            var futureDate = moment().add(1, 'days').format('MM/DD/YYYY');
-            var date = $('<h4>');
-            date.text(futureDate);
-            date.appendTo('#day-1');
 
-            var icon = city.list[0].weather[0].icon;
-            var img = $('<img>');
-            var iconurl = "http://openweathermap.org/img/w/" + icon + ".png";
-            img.attr('src',iconurl)
-            img.appendTo(($('#day-1')));
+            array = [0, 7, 15, 23, 31];
+            for (var i = 1, j = 0; i <= 5; i <= 5 && j < array.length, i++, j++) {
+                day = i;
+                index = j;
 
-            var temp = city.list[0].main.temp;
-            var paragraph = $('<p>');
-            paragraph.text('Temp: ' + temp + '°F');
-            paragraph.appendTo($('#day-1'));
+                var fiveDayDiv = document.querySelector('.five-day-divs');
+                var div = $('<div>');
+                div.attr({
+                    id: 'day-' + i,
+                    class: 'mx-auto px-1 border border-dark',
+                });
+                div.appendTo(fiveDayDiv);
 
-            var windSpeed = city.list[0].wind.speed;
-            var paragraph = $('<p>');
-            paragraph.text('Wind: ' + windSpeed + ' MPH');
-            paragraph.appendTo($('#day-1'));
+                var futureDate = moment().add(day, 'days').format('MM/DD/YYYY');
+                var date = $('<h4>');
+                date.text(futureDate);
+                date.appendTo('#day-' + day);
 
-            var humidity = city.list[0].main.humidity;
-            var paragraph = $('<p>');
-            paragraph.text('Humidity: ' + humidity + '%');
-            paragraph.appendTo($('#day-1'));
+                var icon = city.list[index].weather[0].icon;
+                var img = $('<img>');
+                var iconurl = "http://openweathermap.org/img/w/" + icon + ".png";
+                img.attr('src', iconurl)
+                img.appendTo(('#day-' + day));
 
-            //Day 2 forecast
-            var futureDate = moment().add(2, 'days').format('MM/DD/YYYY');
-            var date = $('<h4>');
-            date.text(futureDate);
-            date.appendTo('#day-1');
+                var temp = city.list[index].main.temp;
+                var paragraph = $('<p>');
+                paragraph.text('Temp: ' + temp + '°F');
+                paragraph.appendTo('#day-' + day);
 
-            var icon = city.list[7].weather[0].icon;
-            var img = $('<img>');
-            var iconurl = "http://openweathermap.org/img/w/" + icon + ".png";
-            img.attr('src',iconurl)
-            img.appendTo(($('#day-2')));
+                var windSpeed = city.list[index].wind.speed;
+                var paragraph = $('<p>');
+                paragraph.text('Wind: ' + windSpeed + ' MPH');
+                paragraph.appendTo('#day-' + day);
 
-            var temp = city.list[7].main.temp;
-            var paragraph = $('<p>');
-            paragraph.text('Temp: ' + temp + '°F');
-            paragraph.appendTo($('#day-2'));
-
-            var windSpeed = city.list[7].wind.speed;
-            var paragraph = $('<p>');
-            paragraph.text('Wind: ' + windSpeed + ' MPH');
-            paragraph.appendTo($('#day-2'));
-
-            var humidity = city.list[7].main.humidity;
-            var paragraph = $('<p>');
-            paragraph.text('Humidity: ' + humidity + '%');
-            paragraph.appendTo($('#day-2'));
+                var humidity = city.list[index].main.humidity;
+                var paragraph = $('<p>');
+                paragraph.text('Humidity: ' + humidity + '%');
+                paragraph.appendTo('#day-' + day);
+            }
         })
 }
 
 $('.search-btn').click(function () {
     //Input value (city name)
-    var name = document.querySelector('#input').value;
+    //var name = document.querySelector('#input').value;
+    var name = $('#input').val();
 
     //Create and display saved city button
     var newBtn = document.createElement('button');
