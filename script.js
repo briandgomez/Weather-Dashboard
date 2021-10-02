@@ -73,14 +73,17 @@ var getUV = function (latitude, longitude) {
         //Current UV index
         .then(function (uvInfo) {
             var uviP = $('#Uvi-p');
-            uviP.text('UV Index: ');
-            var uviSpan = $('#Uvi-span');
-            uviSpan.text(uvInfo.current.uvi);
-            console.log(typeof(uvInfo.current.uvi));
+            uviP.text('UV Index: ' + uvInfo.current.uvi);
 
             if (uvInfo.current.uvi >= 0 && uvInfo.current.uvi <= 2) {
-                $('#Uvi').css('background-color', 'green');
+                $('#Uvi-p').attr('class','low');
             }
+            else if (uvInfo.current.uvi >= 2 && uvInfo.current.uvi <= 5) {
+                $('#Uvi-p').attr('class','moderate');
+            }
+            else if (uvInfo.current.uvi > 5) {
+                $('#Uvi-p').attr('class','high');
+            };
         })
 }
 
@@ -139,6 +142,10 @@ $('.search-btn').click(function () {
     //Input value (city name)
     var name = $('#input').val();
 
+    $('.p-tags').empty();
+    $('.five-day-divs').empty();
+    $('#icon-location').empty();
+
     //Create and display saved city button
     var newBtn = document.createElement('button');
     newBtn.style.margin = '14px 0px'
@@ -173,8 +180,8 @@ $(document).ready(function () {
 
         $(newBtn).on('click',function(){
             var savedCityName = $(this).text();
-            $('.p-tags').empty()
-            $('.five-day-divs').empty()
+            $('.p-tags').empty();
+            $('.five-day-divs').empty();
             $('#icon-location').empty();
 
             getCurrentWeather(savedCityName);
@@ -183,5 +190,3 @@ $(document).ready(function () {
         savedCitiesId.appendChild(newBtn);
     }
 })
-
-

@@ -4,3 +4,15 @@
 .five-day-info {
     height: 40vh;
 }
+
+.low {
+    background-color: green;
+}
+
+.moderate {
+    background-color: yellow;
+}
+
+.high {
+    background-color: red;
+}
