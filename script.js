@@ -27,7 +27,6 @@ var getCurrentWeather = function (name) {
             //Display icon
             var currentIcon = city.weather[0].icon;
             var iconImage = document.createElement('img');
-            //iconImage.innerHTML = '';
             var iconLocation = document.querySelector('#icon-location')
             var iconurl = "http://openweathermap.org/img/w/" + currentIcon + ".png";
             iconImage.setAttribute('src', iconurl);
@@ -38,19 +37,16 @@ var getCurrentWeather = function (name) {
             var currentTemp = city.main.temp;
             var currentTempInfoEl = document.createElement('p');
             var currentInfo = document.querySelector('.p-tags');
-            //currentTempInfoEl.innerHTML = '';
             currentTempInfoEl.textContent = 'Temp: ' + currentTemp + "°F";
             currentInfo.appendChild(currentTempInfoEl);
 
             var currentWind = city.wind.speed;
             var currentWindInfoEl = document.createElement('p');
-            //currentWindInfoEl.innerHTML = '';
             currentWindInfoEl.textContent = 'Wind: ' + currentWind + " MPH";
             currentInfo.appendChild(currentWindInfoEl);
 
             var currentHum = city.main.humidity;
             var currentHumInfoEl = document.createElement('p');
-            //currentHumInfoEl.innerHTML = '';
             currentHumInfoEl.textContent = 'Humidity: ' + currentHum + "%";
             currentInfo.appendChild(currentHumInfoEl);
 
@@ -72,17 +68,23 @@ var getUV = function (latitude, longitude) {
         })
         //Current UV index
         .then(function (uvInfo) {
-            var uviP = $('#Uvi-p');
-            uviP.text('UV Index: ' + uvInfo.current.uvi);
+            var currentInfoDiv = document.querySelector('.p-tags');
+            var uviP = document.createElement('p');
+            uviP.setAttribute('id','index');
+            uviP.textContent = 'UV Index: '; 
+            var uviDiv = document.createElement('div');
+            uviDiv.textContent = uvInfo.current.uvi;
+            uviP.appendChild(uviDiv);
+            currentInfoDiv.appendChild(uviP);
 
             if (uvInfo.current.uvi >= 0 && uvInfo.current.uvi <= 2) {
-                $('#Uvi-p').attr('class','low');
+                $('#index div').attr('class', 'low');
             }
             else if (uvInfo.current.uvi >= 2 && uvInfo.current.uvi <= 5) {
-                $('#Uvi-p').attr('class','moderate');
+                $('#index div').attr('class', 'moderate');
             }
             else if (uvInfo.current.uvi > 5) {
-                $('#Uvi-p').attr('class','high');
+                $('#index div').attr('class', 'high');
             };
         })
 }
@@ -178,7 +180,7 @@ $(document).ready(function () {
         newBtn.style.width = '-webkit-fill-available';
         newBtn.textContent = savedCities[i];
 
-        $(newBtn).on('click',function(){
+        $(newBtn).on('click', function () {
             var savedCityName = $(this).text();
             $('.p-tags').empty();
             $('.five-day-divs').empty();
