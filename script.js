@@ -4,8 +4,8 @@ var getCity = JSON.parse(localStorage.getItem('savedCities')) || [];
 
 //var savedCitiesId = $('.saved-cities');
 var savedCitiesId = document.querySelector('.saved-cities');
-//Displays current weather info
 
+//Displays current weather info
 var getCurrentWeather = function (name) {
     fetch(
         //Current weather information based on user input
@@ -37,7 +37,7 @@ var getCurrentWeather = function (name) {
             //Current temp of a city
             var currentTemp = city.main.temp;
             var currentTempInfoEl = document.createElement('p');
-            var currentInfo = document.querySelector('.current-info');
+            var currentInfo = document.querySelector('.p-tags');
             //currentTempInfoEl.innerHTML = '';
             currentTempInfoEl.textContent = 'Temp: ' + currentTemp + "°F";
             currentInfo.appendChild(currentTempInfoEl);
@@ -72,16 +72,15 @@ var getUV = function (latitude, longitude) {
         })
         //Current UV index
         .then(function (uvInfo) {
-            /*var currentInfo = $('.current-info');
-            var currentUVInfoEl = $('<p>');
-            currentUVInfoEl.val('');
-            currentUVInfoEl.text('UV Index: ' + uvInfo.current.uvi);
-            currentInfo.appendTo(currentUVInfoEl);*/
+            var uviP = $('#Uvi-p');
+            uviP.text('UV Index: ');
+            var uviSpan = $('#Uvi-span');
+            uviSpan.text(uvInfo.current.uvi);
+            console.log(typeof(uvInfo.current.uvi));
 
-            var currentInfo = document.querySelector('.current-info');
-            var currentUVInfoEl = document.createElement('p');
-            currentUVInfoEl.textContent = 'UV Index: ' + uvInfo.current.uvi;
-            currentInfo.appendChild(currentUVInfoEl);
+            if (uvInfo.current.uvi >= 0 && uvInfo.current.uvi <= 2) {
+                $('#Uvi').css('background-color', 'green');
+            }
         })
 }
 
@@ -138,7 +137,6 @@ var getFiveDay = function (name) {
 
 $('.search-btn').click(function () {
     //Input value (city name)
-    //var name = document.querySelector('#input').value;
     var name = $('#input').val();
 
     //Create and display saved city button
@@ -162,9 +160,28 @@ $('.search-btn').click(function () {
     getFiveDay(name);
 })
 
-/*$('.saved-cities').click(function () {
-    //var savedCityBtn = $('div').find('.saved-cities').text();
-    console.log(savedCityBtn);
+$(document).ready(function () {
+    var savedCities = JSON.parse(localStorage.getItem('savedCities'));
 
-    getCurrentWeather(savedCityBtn);
-})*/
+    for (var i = 0; i < savedCities.length; i++) {
+        var newBtn = document.createElement('button');
+        newBtn.style.margin = '14px 0px'
+        newBtn.style.display = 'block';
+        newBtn.style.borderRadius = '5px';
+        newBtn.style.width = '-webkit-fill-available';
+        newBtn.textContent = savedCities[i];
+
+        $(newBtn).on('click',function(){
+            var savedCityName = $(this).text();
+            $('.p-tags').empty()
+            $('.five-day-divs').empty()
+            $('#icon-location').empty();
+
+            getCurrentWeather(savedCityName);
+            getFiveDay(savedCityName);
+        })
+        savedCitiesId.appendChild(newBtn);
+    }
+})
+
+
