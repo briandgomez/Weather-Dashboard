@@ -25,19 +25,21 @@
                 <!--'action'= determines where to send the information (./)-->
                 <!--'size' = extends the width of the inpt element-->
                 <input id="input" class="rounded" type="search" input placeholder="Enter city name"><br>
-                <button class="city-name mt-3 mb-3 btn-block rounded" type="button">Search</button>
-
-                <div class="saved-cities">
-                    <button class="rounded btn-block" type="button">City Name</button>
-                </div>
+                <button class="search-btn mt-3 mb-2 btn-block rounded" type="button">Search</button>
+                <div class="saved-cities"></div>
             </div>
 
             <div class="col-md-8">
                 <div class="current-info border border-dark mb-3">
-                    <h2 id="current-date"></h2>
+                    <h2 id="current-date"></h2><div id="icon-location"></div>
                 </div>
                 <div class="five-day-info border border-dark">
                     <h3>5-Day Forecast</h3>
+                    <div id="day-1"></div>
+                    <div id="day-2"></div>
+                    <div id="day-3"></div>
+                    <div id="day-4"></div>
+                    <div id="day-5"></div>
                 </div>
             </div>
         </div>
