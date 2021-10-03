@@ -2,8 +2,7 @@
 //Turns information in localStorage into a object if it exists OR creates an empty array if there is nothing inside localStorage
 var getCity = JSON.parse(localStorage.getItem('savedCities')) || [];
 
-//var savedCitiesId = $('.saved-cities');
-var savedCitiesId = document.querySelector('.saved-cities');
+var savedCitiesBtn = document.querySelector('.saved-cities');
 
 //Displays current weather info
 var getCurrentWeather = function (name) {
@@ -15,40 +14,42 @@ var getCurrentWeather = function (name) {
             //console.log(response.json());
             return response.json();
         })
-        .then(function (city) {
-            //Longitude and latitude of city
-            var longitude = city.coord.lon;
-            var latitude = city.coord.lat;
+        .then(function (response) {
 
-            var currentDate = document.getElementById('current-date');
+            //Longitude and latitude of response
+            var longitude = response.coord.lon;
+            var latitude = response.coord.lat;
+
             //Current date in MM/DD/YYYY format
-            currentDate.textContent = name + ' ' + moment().format('(MM/DD/YYYY)');
+            var currentDate = $('#current-date');
+            currentDate.text(name + ' ' + moment().format('(MM/DD/YYYY)'));
 
             //Display icon
-            var currentIcon = city.weather[0].icon;
+            var weatherIcon = response.weather[0].icon;
             var iconImage = document.createElement('img');
             var iconLocation = document.querySelector('#icon-location')
-            var iconurl = "http://openweathermap.org/img/w/" + currentIcon + ".png";
+            var iconurl = "http://openweathermap.org/img/w/" + weatherIcon + ".png";
             iconImage.setAttribute('src', iconurl);
             iconLocation.appendChild(iconImage);
 
+            //Current temp
+            var currentTemp = response.main.temp;
+            var currentTempEl = document.createElement('p');
+            var currentWeather = document.querySelector('.p-tags');
+            currentTempEl.textContent = 'Temp: ' + currentTemp + "°F";
+            currentWeather.appendChild(currentTempEl);
 
-            //Current temp of a city
-            var currentTemp = city.main.temp;
-            var currentTempInfoEl = document.createElement('p');
-            var currentInfo = document.querySelector('.p-tags');
-            currentTempInfoEl.textContent = 'Temp: ' + currentTemp + "°F";
-            currentInfo.appendChild(currentTempInfoEl);
+            //Current wind
+            var currentWind = response.wind.speed;
+            var currentWindEl = document.createElement('p');
+            currentWindEl.textContent = 'Wind: ' + currentWind + " MPH";
+            currentWeather.appendChild(currentWindEl);
 
-            var currentWind = city.wind.speed;
-            var currentWindInfoEl = document.createElement('p');
-            currentWindInfoEl.textContent = 'Wind: ' + currentWind + " MPH";
-            currentInfo.appendChild(currentWindInfoEl);
-
-            var currentHum = city.main.humidity;
-            var currentHumInfoEl = document.createElement('p');
-            currentHumInfoEl.textContent = 'Humidity: ' + currentHum + "%";
-            currentInfo.appendChild(currentHumInfoEl);
+            //Current humidity
+            var currentHum = response.main.humidity;
+            var currentHumEl = document.createElement('p');
+            currentHumEl.textContent = 'Humidity: ' + currentHum + "%";
+            currentWeather.appendChild(currentHumEl);
 
             getUV(latitude, longitude);
         })
@@ -56,27 +57,31 @@ var getCurrentWeather = function (name) {
 
 
 var getUV = function (latitude, longitude) {
-    //Get UV information based on latitude and longitude of city name
+
+    //Get UV Index information based on latitude and longitude of city name
     fetch(
         "https://api.openweathermap.org/data/2.5/onecall?lat=" +
         latitude + "&lon=" + longitude +
         "&exclude=hourly&units=imperial&appid=067be3d3a13216f2b92074a702f43b7e"
     )
-        //Return 'One Call info'
+        //Return 'One Call' info
         .then(function (response) {
             return response.json();
         })
-        //Current UV index
+        //Current UV Index
         .then(function (uvInfo) {
-            var currentInfoDiv = document.querySelector('.p-tags');
-            var uviP = document.createElement('p');
-            uviP.setAttribute('id','index');
-            uviP.textContent = 'UV Index: '; 
-            var uviDiv = document.createElement('div');
-            uviDiv.textContent = uvInfo.current.uvi;
-            uviP.appendChild(uviDiv);
-            currentInfoDiv.appendChild(uviP);
 
+            //Create and display UV Index
+            var weatherInfoDiv = document.querySelector('.p-tags');
+            var uviPTag = document.createElement('p');
+            uviPTag.setAttribute('id', 'index');
+            uviPTag.textContent = 'UV Index: ';
+            var uviNum = document.createElement('div');
+            uviNum.textContent = uvInfo.current.uvi;
+            uviPTag.appendChild(uviNum);
+            weatherInfoDiv.appendChild(uviPTag);
+
+            //Change background color of UV Index based on value
             if (uvInfo.current.uvi >= 0 && uvInfo.current.uvi <= 2) {
                 $('#index div').attr('class', 'low');
             }
@@ -98,17 +103,20 @@ var getFiveDay = function (name) {
         })
         .then(function (city) {
 
+            //Index numbers that indicate specific time of a specific date
             array = [0, 7, 15, 23, 31];
             for (var i = 1, j = 0; i <= 5; i <= 5 && j < array.length, i++, j++) {
                 day = i;
                 index = j;
 
+                //Creates div elements and information for 5-day forecast
                 var fiveDayDiv = document.querySelector('.five-day-divs');
                 var div = $('<div>');
                 div.attr({
                     id: 'day-' + i,
-                    class: 'mx-auto px-1 border border-dark',
+                    class: 'mx-auto px-1 border border-dark rounded',
                 });
+                div.css('background-color','#5F9EA0');
                 div.appendTo(fiveDayDiv);
 
                 var futureDate = moment().add(day, 'days').format('MM/DD/YYYY');
@@ -148,20 +156,21 @@ $('.search-btn').click(function () {
     $('.five-day-divs').empty();
     $('#icon-location').empty();
 
-    //Create and display saved city button
+    //Create and display saved city buttons
     var newBtn = document.createElement('button');
     newBtn.style.margin = '14px 0px'
     newBtn.style.display = 'block';
     newBtn.style.borderRadius = '5px';
     newBtn.style.width = '-webkit-fill-available';
     newBtn.textContent = name;
-    savedCitiesId.appendChild(newBtn);
+    savedCitiesBtn.appendChild(newBtn);
 
     //Clears search input
     $('#input').val('');
 
     //Adds city name to empty array
     getCity.push(name);
+
     //Saves city name to localStorage
     localStorage.setItem('savedCities', JSON.stringify(getCity));
 
@@ -170,8 +179,10 @@ $('.search-btn').click(function () {
 })
 
 $(document).ready(function () {
+    //Retrieves saved cities from array
     var savedCities = JSON.parse(localStorage.getItem('savedCities'));
 
+    //Loads saved city buttons when page loads
     for (var i = 0; i < savedCities.length; i++) {
         var newBtn = document.createElement('button');
         newBtn.style.margin = '14px 0px'
@@ -180,6 +191,7 @@ $(document).ready(function () {
         newBtn.style.width = '-webkit-fill-available';
         newBtn.textContent = savedCities[i];
 
+        //Clears current and 5-day information when saved city button is clicked
         $(newBtn).on('click', function () {
             var savedCityName = $(this).text();
             $('.p-tags').empty();
@@ -189,6 +201,6 @@ $(document).ready(function () {
             getCurrentWeather(savedCityName);
             getFiveDay(savedCityName);
         })
-        savedCitiesId.appendChild(newBtn);
+        savedCitiesBtn.appendChild(newBtn);
     }
 })

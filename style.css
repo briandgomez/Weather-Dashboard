@@ -1,12 +1,27 @@
-.current-info {
-    height: 39vh;
+body {
+    background-color: #a8a7caba !important;
 }
+
+.title {
+    background-color: #5F9EA0;
+}
+
+.current-info {
+    height: 40vh;
+}
+
+#index div {
+    width: min-content;
+    height: min-content;
+    border-radius: 3px;
+}
+
 .five-day-info {
     height: 40vh;
 }
 
 .low {
-    background-color: green;
+    background-color: #34b734;
 }
 
 .moderate {
@@ -14,11 +29,5 @@
 }
 
 .high {
-    background-color: red;
-}
-
-#index div {
-    width: min-content;
-    height: min-content;
-    border-radius: 3px;
+    background-color: #f34545;
 }
