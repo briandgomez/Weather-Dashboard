@@ -5,7 +5,7 @@ The following repository contains code for a weather dashboard. As shown in the 
 ## Weather Information Display
 ![image](https://user-images.githubusercontent.com/69539559/135768282-29589548-6c28-4da2-902e-c7468cbb5e5e.png)
 
-## Features
+## Toolss
 This project was created using the following:
 * Bootstrap
 * JQuery
